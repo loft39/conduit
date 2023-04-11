@@ -35,7 +35,7 @@ class ObjectController extends Database {
       $query = "SELECT * FROM `$tableName`";
 
       if (!$this->options['includeUnpublished']) {
-        $query .= " WHERE `published` = 1";
+        $query .= " WHERE `published` = 1 ORDER BY `sortorder` ASC";
       }
 
       $obj = $this->dbObject->prepare($query);
