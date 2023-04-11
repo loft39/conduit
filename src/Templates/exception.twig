@@ -1,0 +1,41 @@
+<style>
+    body {
+        font-family: sans-serif;
+    }
+    table, pre, details {
+        margin-top:10px;
+    }
+    table, td, th {
+        border: 1px solid #333;
+        border-collapse: collapse;
+    }
+</style>
+
+<h1>Error!</h1>
+<h2>{{ exceptionType }}</h2>
+<p>{{ exception.message }}</p>
+<details>
+    <summary style="cursor:pointer;">Full Dump</summary>
+    <pre>{{ dump(exception) }}</pre>
+</details>
+<details>
+    <summary style="cursor:pointer;">Stack Trace</summary>
+    <table>
+        <thead>
+        <tr>
+            <th>#</th>
+            <th>Function</th>
+            <th>Location</th>
+        </tr>
+        </thead>
+        <tbody>
+        {% for key, trace in exception.trace %}
+            <tr>
+                <td>{{ key }}</td>
+                <td>{{ trace.class }}{{ trace.type }}{{ trace.function }}</td>
+                <td>{{ trace.file }}</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+</details>

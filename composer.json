@@ -1,0 +1,34 @@
+{
+    "name": "charliewilson/conduit",
+    "type": "project",
+    "description": "Simple, opinionated microframework for PHP CRUD applications.",
+    "license": "MIT",
+    "version": "1.0.0",
+    "authors": [
+        {
+            "name": "Charlie Wilson",
+            "email": "me@charliewilson.co.uk",
+            "homepage": "https://charlie.town"
+        }
+    ],
+    "homepage": "https://github.com/charliewilson/conduit",
+    "require": {
+        "ext-pdo": "*",
+        "twig/twig": "^3.5",
+        "twig/intl-extra": "^3.5",
+        "altorouter/altorouter": "^2.0",
+        "symfony/yaml": "^6.2"
+    },
+    "autoload": {
+        "psr-4": {
+            "Conduit\\": "conduit/"
+        }
+    },
+    "scripts": {
+        "post-create-project-cmd": "ddev config",
+        "conduit-object-create": "Conduit\\Admin\\ObjectManager::create"
+    },
+    "scripts-descriptions": {
+        "conduit-object-create": "Conduit: Creates a new object. Scaffolds an 'obj_*' table in your database and generates an object class."
+    }
+}
