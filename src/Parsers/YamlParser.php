@@ -14,7 +14,11 @@ class YamlParser {
 
   function configRead($path = null): array {
     if (!$path) {
-      $path = $_SERVER['DOCUMENT_ROOT']."/../app/app.yml";
+      if ($_SERVER['DOCUMENT_ROOT'] !== "") {
+        $path = $_SERVER['DOCUMENT_ROOT'] . "/../app/app.yml";
+      } else {
+        $path = __DIR__ . "/../../../../../app/app.yml";
+      }
     }
 
     return $this->parser::parseFile($path);
