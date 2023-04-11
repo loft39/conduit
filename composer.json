@@ -1,6 +1,5 @@
 {
-    "name": "charliewilson/conduit",
-    "type": "project",
+    "name": "loft39/conduit",
     "description": "Simple, opinionated microframework for PHP CRUD applications.",
     "license": "MIT",
     "version": "1.0.0",
@@ -11,7 +10,7 @@
             "homepage": "https://charlie.town"
         }
     ],
-    "homepage": "https://github.com/charliewilson/conduit",
+    "homepage": "https://github.com/loft39/conduit",
     "require": {
         "ext-pdo": "*",
         "twig/twig": "^3.5",
@@ -21,14 +20,7 @@
     },
     "autoload": {
         "psr-4": {
-            "Conduit\\": "conduit/"
+            "Conduit\\": "src/"
         }
-    },
-    "scripts": {
-        "post-create-project-cmd": "ddev config",
-        "conduit-object-create": "Conduit\\Admin\\ObjectManager::create"
-    },
-    "scripts-descriptions": {
-        "conduit-object-create": "Conduit: Creates a new object. Scaffolds an 'obj_*' table in your database and generates an object class."
     }
 }
