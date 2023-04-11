@@ -36,7 +36,7 @@ class ObjectManager
       $db->dbObject->query($dbContents);
       echo "Creating object class '${objName}Object'...\n";
       $fileContents = $twig->render("ObjectClass.twig", ["name" => $objName]);
-      if (!file_put_contents(__DIR__ . "/../../app/objects/${objName}Object.php", $fileContents)) {
+      if (!file_put_contents(__DIR__ . "/../../../../../app/objects/${objName}Object.php", $fileContents)) {
         echo "Error creating object class.";
       }
       echo "Object $objName created!\n";
