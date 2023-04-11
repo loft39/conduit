@@ -57,7 +57,7 @@ Conduit apps' main configuration lives in `/app/app.yml`:
 name: HelloWorld
 version: "1.0"
 target: development
-# Database - uncomment the next 6 lines if you're using MySQL and DDEV.
+# Database - uncomment the below if you're using MySQL and DDEV.
 #database:
 #  mysql:
 #    host: db
