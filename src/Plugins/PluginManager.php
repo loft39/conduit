@@ -9,14 +9,14 @@ class PluginManager
 
   public function __construct()
   {
-    $this->listing = array_diff(scandir(__DIR__.'/../../plugins'), array('..', '.'));
+    $this->listing = array_diff(scandir($_SERVER['DOCUMENT_ROOT'].'/../plugins'), array('..', '.'));
   }
 
   public function loadPlugins(): void
   {
     foreach ($this->listing as $plugin) {
-      if (is_dir(__DIR__."/../../plugins/$plugin")) {
-        require_once(__DIR__ . "/../../plugins/$plugin/$plugin.php");
+      if (is_dir($_SERVER['DOCUMENT_ROOT'] . "/../plugins/$plugin")) {
+        require_once($_SERVER['DOCUMENT_ROOT'] . "/../plugins/$plugin/$plugin.php");
       }
     }
   }

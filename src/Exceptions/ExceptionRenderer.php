@@ -14,7 +14,7 @@ class ExceptionRenderer
   private Environment $twig;
 
   public function __construct() {
-    $this->twig   = new Environment((new FilesystemLoader($_SERVER['DOCUMENT_ROOT'] . "/../conduit/Templates")),[
+    $this->twig   = new Environment((new FilesystemLoader(__DIR__ . "/../Templates")),[
         'debug' => true
     ]);
     $this->twig->addExtension(new DebugExtension());
