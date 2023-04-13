@@ -25,6 +25,17 @@ class ObjectController extends Database {
     }
   }
 
+  /*
+   * TODO: functions;
+   *
+   * Options:
+   * includeUnpublished | bool, default false |
+   *
+   * getAll()
+   *
+   */
+
+
   public function readAll(): array|bool {
 
     $tableName = "obj_".$this->objectName;
@@ -50,6 +61,8 @@ class ObjectController extends Database {
     }
   }
 
+
+  //TODO: update this to readUnique - only returns the first object where $field matches $value
   public function read($field, $value): mixed {
 
     $tableName = "obj_".$this->objectName;
