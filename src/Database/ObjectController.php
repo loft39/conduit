@@ -158,7 +158,7 @@ class ObjectController extends Database {
       $query .= " ORDER BY `sortorder` DESC";
 
       $obj = $this->dbObject->prepare($query);
-      $obj->execute([':value' => $value]);
+      $obj->execute();
 
       // TODO: throw exception if class not found, maybe create a new exception,
       //  or potentially create a new FileNotFoundException for all areas in Conduit?
