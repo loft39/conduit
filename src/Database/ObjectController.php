@@ -46,8 +46,10 @@ class ObjectController extends Database {
       $query = "SELECT * FROM `$tableName`";
 
       if (!$this->options['includeUnpublished']) {
-        $query .= " WHERE `published` = 1 ORDER BY `sortorder` DESC";
+        $query .= " WHERE `published` = 1";
       }
+
+      $query .= " ORDER BY `sortorder` DESC";
 
       $obj = $this->dbObject->prepare($query);
       $obj->execute();
@@ -70,7 +72,16 @@ class ObjectController extends Database {
       preg_match("/^[a-zA-Z0-9]([a-zA-Z0-9_])+$/i", $tableName) &&
       preg_match("/^[a-zA-Z0-9]([a-zA-Z0-9_])+$/i", $field)
     ) {
-      $obj = $this->dbObject->prepare("SELECT * FROM `$tableName` WHERE `$field` = :value ORDER BY `sortorder` DESC");
+
+      $query = "SELECT * FROM `$tableName` WHERE `$field` = :value";
+
+      if (!$this->options['includeUnpublished']) {
+        $query .= " AND `published` = 1";
+      }
+
+      $query .= " ORDER BY `sortorder` DESC";
+
+      $obj = $this->dbObject->prepare($query);
       $obj->execute([':value' => $value]);
 
       // TODO: throw exception if class not found, maybe create a new exception,
@@ -91,7 +102,16 @@ class ObjectController extends Database {
         preg_match("/^[a-zA-Z0-9]([a-zA-Z0-9_])+$/i", $tableName) &&
         preg_match("/^[a-zA-Z0-9]([a-zA-Z0-9_])+$/i", $field)
     ) {
-      $obj = $this->dbObject->prepare("SELECT * FROM `$tableName` WHERE `$field` = :value ORDER BY `sortorder` DESC");
+
+      $query = "SELECT * FROM `$tableName` WHERE `$field` = :value";
+
+      if (!$this->options['includeUnpublished']) {
+        $query .= " AND `published` = 1";
+      }
+
+      $query .= " ORDER BY `sortorder` DESC";
+
+      $obj = $this->dbObject->prepare($query);
       $obj->execute([':value' => $value]);
 
       // TODO: throw exception if class not found, maybe create a new exception,
