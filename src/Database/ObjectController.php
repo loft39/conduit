@@ -61,9 +61,7 @@ class ObjectController extends Database {
     }
   }
 
-
-  //TODO: update this to readUnique - only returns the first object where $field matches $value
-  public function read($field, $value): mixed {
+  public function readAllWhere($field, $value): array|bool {
 
     $tableName = "obj_".$this->objectName;
 
@@ -77,12 +75,31 @@ class ObjectController extends Database {
 
       // TODO: throw exception if class not found, maybe create a new exception,
       //  or potentially create a new FileNotFoundException for all areas in Conduit?
-      return $obj->fetchObject( $this->objectName . 'Object');
+      return $obj->fetchAll(PDO::FETCH_CLASS, $this->objectName . 'Object');
     } else {
       //TODO: throw new invalid object name exception
-      return [
-        "nah"
-      ];
+      return false;
+    }
+  }
+
+  public function readSingleWhere($field, $value): object|bool {
+
+    $tableName = "obj_".$this->objectName;
+
+    //Table name and search field must only be Alpha+Underscore
+    if (
+        preg_match("/^[a-zA-Z0-9]([a-zA-Z0-9_])+$/i", $tableName) &&
+        preg_match("/^[a-zA-Z0-9]([a-zA-Z0-9_])+$/i", $field)
+    ) {
+      $obj = $this->dbObject->prepare("SELECT * FROM `$tableName` WHERE `$field` = :value");
+      $obj->execute([':value' => $value]);
+
+      // TODO: throw exception if class not found, maybe create a new exception,
+      //  or potentially create a new FileNotFoundException for all areas in Conduit?
+      return $obj->fetchObject($this->objectName . 'Object');
+    } else {
+      //TODO: throw new invalid object name exception
+      return false;
     }
   }
 //
