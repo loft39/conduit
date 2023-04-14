@@ -173,12 +173,6 @@ class ObjectController extends Database {
   }
 
 //
-//  public function read($key): array {
-//    $kv = $this->dbObject->prepare("SELECT * from `keyvalue` where `k` = :key");
-//    $kv->execute([':key' => $key]);
-//    return $kv->fetch();
-//  }
-//
 //  public function write($key, $value): bool
 //  {
 //    $kv = $this->dbObject->prepare(
