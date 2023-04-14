@@ -70,7 +70,7 @@ class ObjectController extends Database {
       preg_match("/^[a-zA-Z0-9]([a-zA-Z0-9_])+$/i", $tableName) &&
       preg_match("/^[a-zA-Z0-9]([a-zA-Z0-9_])+$/i", $field)
     ) {
-      $obj = $this->dbObject->prepare("SELECT * FROM `$tableName` WHERE `$field` = :value");
+      $obj = $this->dbObject->prepare("SELECT * FROM `$tableName` WHERE `$field` = :value ORDER BY `sortorder` DESC");
       $obj->execute([':value' => $value]);
 
       // TODO: throw exception if class not found, maybe create a new exception,
@@ -91,7 +91,7 @@ class ObjectController extends Database {
         preg_match("/^[a-zA-Z0-9]([a-zA-Z0-9_])+$/i", $tableName) &&
         preg_match("/^[a-zA-Z0-9]([a-zA-Z0-9_])+$/i", $field)
     ) {
-      $obj = $this->dbObject->prepare("SELECT * FROM `$tableName` WHERE `$field` = :value");
+      $obj = $this->dbObject->prepare("SELECT * FROM `$tableName` WHERE `$field` = :value ORDER BY `sortorder` DESC");
       $obj->execute([':value' => $value]);
 
       // TODO: throw exception if class not found, maybe create a new exception,
