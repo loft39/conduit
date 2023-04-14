@@ -54,6 +54,12 @@ class App
       }
       $this->twig->addExtension(new IntlExtension());
       $this->router = new RouterController($this->altoRouter, $this->twig, $this->appConfig);
+
+      //Bootstrap actions from app.yml
+      if (isset($this->appConfig['timezone'])) {
+        date_default_timezone_set($this->appConfig['timezone']);
+      }
+
     } catch (Exception $e) {
       $this->exceptionRenderer->render($e);
     }
