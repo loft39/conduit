@@ -2,7 +2,6 @@
 
 namespace Conduit\Database;
 
-use Conduit\Objects\GenericObject;
 use PDO;
 
 class ObjectController extends Database {
@@ -122,6 +121,57 @@ class ObjectController extends Database {
       return false;
     }
   }
+
+  public function search($fields, $value): array|null {
+
+    $tableName = "obj_".$this->objectName;
+    $objects = null;
+
+    //Value to search for must only be Alpha+Underscore
+    if (
+        preg_match("/^[a-zA-Z0-9]([a-zA-Z0-9_])+$/i", $value)
+    ) {
+
+      $query = "SELECT * FROM `$tableName` WHERE ";
+
+      $fieldsSQL = Array();
+
+      foreach ($fields as $field) {
+
+        //Each search field must only be Alpha+Underscore
+        if (preg_match("/^[a-zA-Z0-9]([a-zA-Z0-9_])+$/i", $field)) {
+
+          $fieldsSQL[] = "`$field` LIKE '%$value%'";
+
+        } else {
+          //TODO: throw new invalid field name exception
+
+        }
+      }
+
+      $query .= "(".implode(" OR ", $fieldsSQL).")";
+
+      if (!$this->options['includeUnpublished']) {
+        $query .= " AND `published` = 1";
+      }
+
+      $query .= " ORDER BY `sortorder` DESC";
+
+      $obj = $this->dbObject->prepare($query);
+      $obj->execute([':value' => $value]);
+
+      // TODO: throw exception if class not found, maybe create a new exception,
+      //  or potentially create a new FileNotFoundException for all areas in Conduit?
+      $objects = $obj->fetchAll(PDO::FETCH_CLASS, $this->objectName . 'Object');
+
+    } else {
+      //TODO: throw new invalid value exception
+
+    }
+
+    return $objects;
+  }
+
 //
 //  public function read($key): array {
 //    $kv = $this->dbObject->prepare("SELECT * from `keyvalue` where `k` = :key");
