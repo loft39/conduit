@@ -50,9 +50,9 @@ class Database
     if ($driver == "mysql") {
 
       $host = (string)$config['database'][$driver]['host'];
-      $user = (string)$config['database'][$driver]['host'];
-      $pass = (string)$config['database'][$driver]['host'];
-      $db = (string)$config['database'][$driver]['host'];
+      $user = (string)$config['database'][$driver]['user'];
+      $pass = (string)$config['database'][$driver]['pass'];
+      $db = (string)$config['database'][$driver]['db'];
 
       try {
         $this->dbObject = new PDO(
