@@ -21,6 +21,18 @@ class YamlParser {
       }
     }
 
-    return $this->parser::parseFile($path);
+    $config = $this->parser::parseFile($path);
+
+    /*
+     * Visit every leaf node of the config array, and if a key begins with '$',
+     * replace with its relevant environment variable.
+     */
+    array_walk_recursive($config, function(&$item) {
+      if (str_starts_with($item, '$')) {
+        $item = getenv(substr($item, 1));
+      }
+    });
+
+    return $config;
   }
 }
