@@ -8,8 +8,9 @@ use Exception;
 //Packages
 use AltoRouter;
 use Twig\Environment;
-use Twig\Extension\DebugExtension;
+use Twig\Extension\DebugExtension;;
 use Twig\Extra\Intl\IntlExtension;
+use Twig\Extra\String\StringExtension;
 use Twig\Loader\FilesystemLoader;
 
 //Conduit
@@ -53,6 +54,7 @@ class App
         $this->twig = new Environment((new FilesystemLoader($_SERVER['DOCUMENT_ROOT'] . "/../app/templates")));
       }
       $this->twig->addExtension(new IntlExtension());
+      $this->twig->addExtension(new StringExtension());
       $this->router = new RouterController($this->altoRouter, $this->twig, $this->appConfig);
 
       //Bootstrap actions from app.yml
