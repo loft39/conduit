@@ -172,25 +172,4 @@ class ObjectController extends Database {
     return $objects;
   }
 
-//
-//  public function write($key, $value): bool
-//  {
-//    $kv = $this->dbObject->prepare(
-//      "INSERT INTO `keyvalue` (`k`, `v`)
-//               VALUES (:key, :value)
-//               ON DUPLICATE KEY UPDATE `v` = :value;");
-//    $kv->execute([':key' => $key, ':value' => $value]);
-//
-//    return true;
-//  }
-//
-//  public function delete($key): bool
-//  {
-//    $kv = $this->dbObject->prepare(
-//        "DELETE FROM `keyvalue` where `k` = :key;");
-//    $kv->execute([':key' => $key]);
-//
-//    return true;
-//  }
-
 }
