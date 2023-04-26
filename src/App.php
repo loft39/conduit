@@ -46,13 +46,18 @@ class App
       $this->pluginManager = new PluginManager;
 
       if ($this->appConfig['target'] == "development") {
-        $this->twig = new Environment((new FilesystemLoader($_SERVER['DOCUMENT_ROOT'] . "/../app/templates")),[
-          'debug' => true
-        ]);
+        $this->twig = new Environment(
+            new FilesystemLoader($_SERVER['DOCUMENT_ROOT'] . "/../app/templates"), [
+              'debug' => true
+            ]
+        );
         $this->twig->addExtension(new DebugExtension());
       } else {
-        $this->twig = new Environment((new FilesystemLoader($_SERVER['DOCUMENT_ROOT'] . "/../app/templates")));
+        $this->twig = new Environment(
+            new FilesystemLoader($_SERVER['DOCUMENT_ROOT'] . "/../app/templates")
+        );
       }
+
       $this->twig->addExtension(new IntlExtension());
       $this->twig->addExtension(new StringExtension());
       $this->router = new RouterController($this->altoRouter, $this->twig, $this->appConfig);
