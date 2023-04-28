@@ -22,14 +22,12 @@ The easiest (and recommended) way to get started for local development with Cond
 
 ### Installing with Composer
 
+> **NOTE:** This repository is for the core Conduit framework. If you want to create a new project using Conduit,
+[conduit-project](https://github.com/loft39/conduit-project) is the recommended way to get started.
+
 Run `create-project` to create a new local Conduit project in the `HelloWorld` directory:
 ```shell
-composer create-project charliewilson/conduit HelloWorld
-```
-If you want to run the latest test version, specify the `dev-master` version:
-
-```shell
-composer create-project charliewilson/conduit HelloWorld dev-master
+composer create-project loft39/conduit-project HelloWorld
 ```
 
 This will clone the repo and run `composer install` automatically. It'll then run the `ddev config` wizard to set up
