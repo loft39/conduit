@@ -19,7 +19,8 @@ class ObjectController extends Database {
     //Init default options
     if (!$options) {
       $this->options = [
-          "includeUnpublished" => false
+        "includeUnpublished" => false,
+        "sortByDateAdded" => false
       ];
     }
   }
@@ -48,7 +49,11 @@ class ObjectController extends Database {
         $query .= " WHERE `published` = 1";
       }
 
-      $query .= " ORDER BY `sortorder` DESC";
+      if ($this->options['sortByDateAdded']) {
+        $query .= " ORDER BY `dateadded` DESC";
+      } else {
+        $query .= " ORDER BY `sortorder` DESC";
+      }
 
       $obj = $this->dbObject->prepare($query);
       $obj->execute();
@@ -78,7 +83,11 @@ class ObjectController extends Database {
         $query .= " AND `published` = 1";
       }
 
-      $query .= " ORDER BY `sortorder` DESC";
+      if ($this->options['sortByDateAdded']) {
+        $query .= " ORDER BY `dateadded` DESC";
+      } else {
+        $query .= " ORDER BY `sortorder` DESC";
+      }
 
       $obj = $this->dbObject->prepare($query);
       $obj->execute([':value' => $value]);
@@ -108,7 +117,11 @@ class ObjectController extends Database {
         $query .= " AND `published` = 1";
       }
 
-      $query .= " ORDER BY `sortorder` DESC";
+      if ($this->options['sortByDateAdded']) {
+        $query .= " ORDER BY `dateadded` DESC";
+      } else {
+        $query .= " ORDER BY `sortorder` DESC";
+      }
 
       $obj = $this->dbObject->prepare($query);
       $obj->execute([':value' => $value]);
@@ -155,7 +168,11 @@ class ObjectController extends Database {
         $query .= " AND `published` = 1";
       }
 
-      $query .= " ORDER BY `sortorder` DESC";
+      if ($this->options['sortByDateAdded']) {
+        $query .= " ORDER BY `dateadded` DESC";
+      } else {
+        $query .= " ORDER BY `sortorder` DESC";
+      }
 
       $obj = $this->dbObject->prepare($query);
       $obj->execute();
