@@ -20,7 +20,8 @@ class ObjectController extends Database {
     if (!$options) {
       $this->options = [
         "includeUnpublished" => false,
-        "sortByDateAdded" => false
+        "sortByDateAdded"    => false,
+        "limit"              => false
       ];
     }
   }
@@ -53,6 +54,11 @@ class ObjectController extends Database {
         $query .= " ORDER BY `dateadded` DESC";
       } else {
         $query .= " ORDER BY `sortorder` DESC";
+      }
+
+      if ($this->options['limit'] !== false) {
+        $l = (int)$this->options['limit'];
+        $query .= " LIMIT $l;";
       }
 
       $obj = $this->dbObject->prepare($query);
@@ -89,6 +95,11 @@ class ObjectController extends Database {
         $query .= " ORDER BY `sortorder` DESC";
       }
 
+      if ($this->options['limit'] !== false) {
+        $l = (int)$this->options['limit'];
+        $query .= " LIMIT $l;";
+      }
+
       $obj = $this->dbObject->prepare($query);
       $obj->execute([':value' => $value]);
 
@@ -122,6 +133,9 @@ class ObjectController extends Database {
       } else {
         $query .= " ORDER BY `sortorder` DESC";
       }
+
+      $query .= " LIMIT 1;";
+
 
       $obj = $this->dbObject->prepare($query);
       $obj->execute([':value' => $value]);
@@ -172,6 +186,11 @@ class ObjectController extends Database {
         $query .= " ORDER BY `dateadded` DESC";
       } else {
         $query .= " ORDER BY `sortorder` DESC";
+      }
+
+      if ($this->options['limit'] !== false) {
+        $l = (int)$this->options['limit'];
+        $query .= " LIMIT $l;";
       }
 
       $obj = $this->dbObject->prepare($query);
