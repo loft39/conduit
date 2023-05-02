@@ -91,7 +91,7 @@ class RouterController
       $this->handleRoute($match);
 
     } else {
-      echo $this->twig->render('404.twig');
+      header("Location: /404");
       exit;
     }
   }
