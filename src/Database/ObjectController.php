@@ -36,7 +36,6 @@ class ObjectController extends Database {
    *
    */
 
-
   public function readAll(): array|bool {
 
     $tableName = "obj_".$this->objectName;
