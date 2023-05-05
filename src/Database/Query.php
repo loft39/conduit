@@ -11,7 +11,6 @@ class Query extends Database {
   )
   {
     parent::__construct();
-    require($_SERVER['DOCUMENT_ROOT'] . "/../app/objects/" . $this->objectName . "Object.php");
 
     //Init default options
     if (!$options) {
