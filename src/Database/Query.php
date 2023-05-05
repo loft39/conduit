@@ -7,7 +7,6 @@ use PDO;
 class Query extends Database {
 
   public function __construct(
-    private readonly String $objectName,
     private Array|null $options = null
   )
   {
