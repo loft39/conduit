@@ -42,7 +42,7 @@ class GenericObject {
   }
 
   public function getStructure(): array {
-    return get_class_vars($this::class);
+    return get_class_vars(static::class);
   }
   
 }
