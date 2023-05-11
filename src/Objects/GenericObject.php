@@ -40,5 +40,9 @@ class GenericObject {
   public function published(): bool {
     return $this->published === 1;
   }
+
+  public function getStructure(): array {
+    return get_class_vars($this::class);
+  }
   
 }
