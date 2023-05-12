@@ -41,7 +41,7 @@ class GenericObject {
     return $this->published === 1;
   }
 
-  public function getStructure(): array {
+  public function getFields(): array {
     return get_class_vars(get_class($this));
   }
   
