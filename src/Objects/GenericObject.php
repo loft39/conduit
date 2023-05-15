@@ -14,18 +14,18 @@ class GenericObject {
   protected int $dateadded;
   protected int $published;
 
-  public function id(): int {
-    return $this->id;
+  public function id(): int|null {
+    return $this->id ?? null;
   }
 
-  public function sortOrder(): bool {
-    return $this->sortorder;
+  public function sortOrder(): bool|null {
+    return $this->sortorder ?? null;
   }
 
   /**
    * @throws InvalidDateAddedException
    */
-  public function dateAdded(): DateTime|bool {
+  public function dateAdded(): DateTime|null {
     if ($this->dateadded != "") {
       try {
         return new DateTime($this->dateadded);
@@ -33,7 +33,7 @@ class GenericObject {
         throw new InvalidDateAddedException("dateAdded field for this object cannot be parsed into DateTime object");
       }
     } else {
-      return false;
+      return null;
     }
   }
 
