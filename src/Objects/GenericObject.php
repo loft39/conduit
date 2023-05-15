@@ -11,7 +11,7 @@ class GenericObject {
 
   protected int $id;
   protected int $sortorder;
-  protected int $dateadded;
+  protected string $dateadded;
   protected int $published;
 
   public function id(): int|null {
