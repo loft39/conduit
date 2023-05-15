@@ -9,10 +9,10 @@ use Conduit\Exceptions\Database\InvalidDateAddedException;
 
 class GenericObject {
 
-  private int $id;
-  private int $sortorder;
-  private int $dateadded;
-  private int $published;
+  protected int $id;
+  protected int $sortorder;
+  protected int $dateadded;
+  protected int $published;
 
   public function id(): int {
     return $this->id;
