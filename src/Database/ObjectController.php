@@ -2,6 +2,7 @@
 
 namespace Conduit\Database;
 
+use Conduit\Objects\GenericObject;
 use PDO;
 
 class ObjectController extends Database {
@@ -205,6 +206,100 @@ class ObjectController extends Database {
     }
 
     return $objects;
+  }
+
+  public function save(GenericObject $object): bool {
+
+    //TODO: accept an object, grab the DB fields from $object->getFields(), and persist it to the database.
+    // create a new one if no ID, or if one exists with that ID, replace it.
+
+    // Get the table name from the object by stripping "Object" from the end and
+    // prepending "obj_".
+    $tableName = "obj_" . substr(get_class($object), 0, -6);
+
+    $existing = $this->dbObject->prepare("SELECT `id` from :table WHERE `id` = :id");
+
+    $existing->execute([
+      ":table" => $tableName,
+      ":id" => $object->id()
+    ]);
+
+    $existing->fetch(PDO::FETCH_ASSOC);
+
+    return true;
+
+
+    /*
+     *
+     * GPT ANSWER
+     *
+     *
+     */
+
+      // Table name must only be Alpha+Underscore
+      if (preg_match("/^[a-zA-Z0-9]([a-zA-Z0-9_])+$/i", $tableName)) {
+        // Get the object properties
+        $properties = get_object_vars($object);
+
+        // Check if the object has an ID
+        if (isset($object->id) && is_int($object->id)) {
+          // Prepare the update query
+          $query = "UPDATE `$tableName` SET ";
+          $updateFields = [];
+          foreach ($properties as $property => $value) {
+            // Exclude properties that start with an underscore
+            if (substr($property, 0, 1) !== '_' && $property !== 'id') {
+              $updateFields[] = "`$property` = :$property";
+            }
+          }
+          $query .= implode(', ', $updateFields);
+          $query .= " WHERE `id` = :id;";
+        } else {
+          // Prepare the insert query
+          $columns = [];
+          $values = [];
+          foreach ($properties as $property => $value) {
+            // Exclude properties that start with an underscore
+            if (substr($property, 0, 1) !== '_') {
+              $columns[] = "`$property`";
+              $values[] = ":$property";
+            }
+          }
+          $query = "INSERT INTO `$tableName` (";
+          $query .= implode(', ', $columns);
+          $query .= ") VALUES (";
+          $query .= implode(', ', $values);
+          $query .= ");";
+        }
+
+        $statement = $this->dbObject->prepare($query);
+
+        // Bind parameter values
+        foreach ($properties as $property => $value) {
+          if (substr($property, 0, 1) !== '_') {
+            $statement->bindValue(":$property", $value);
+          }
+        }
+
+        // Bind the ID if it exists
+        if (isset($object->id) && is_int($object->id)) {
+          $statement->bindValue(':id', $object->id);
+        }
+
+        // Execute the query
+        if ($statement->execute()) {
+          return true;
+        } else {
+          // TODO: handle save error if needed
+          return false;
+        }
+      } else {
+        // TODO: throw new invalid object name exception
+        return false;
+      }
+
+
+
   }
 
 }
