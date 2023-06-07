@@ -236,6 +236,7 @@ class ObjectController extends Database {
     // Inits the arrays used to build the SQL query
     $columns = [];
     $values = [];
+    $execute = [];
 
     // Add fields from the create() method's array argument
     foreach ($fields as $property => $value) {
@@ -246,7 +247,8 @@ class ObjectController extends Database {
       } else {
         // otherwise add the column and value to their respective arrays
         $columns[] = "`$property`";
-        $values[] = ":$value";
+        $values[] = ":$property";
+        $execute[":$property"] = $value;
       }
     }
 
@@ -260,7 +262,7 @@ class ObjectController extends Database {
 
     try {
       $q = $this->dbObject->prepare($query);
-      $q->execute();
+      $q->execute($execute);
       return true;
     } catch (PDOException $e) {
       return $e;
