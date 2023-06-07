@@ -10,27 +10,44 @@ use PDOException;
 class ObjectController extends Database {
 
   private string $regexPattern = "/^[a-zA-Z0-9]([a-zA-Z0-9_])+$/i";
+  private array $options;
 
   public function __construct(
     private readonly String $objectName,
-    private Array|null $options = null
+    private readonly Array|null $userOptions = null
   )
   {
     parent::__construct();
     require($_SERVER['DOCUMENT_ROOT'] . "/../app/objects/" . $this->objectName . "Object.php");
 
-    //Init default options
-    if (!$options) {
-      $this->options = [
-        "includeUnpublished" => false,
-        "sortByDateAdded"    => false,
-        "limit"              => false,
-        "customSort"         => [
-            "field"          => "id",
-            "direction"      => "desc"
-        ]
-      ];
+    // Default options
+    $defaults = [
+      "includeUnpublished" => false,
+      "sortByDateAdded"    => false,
+      "limit"              => false,
+      "customSort"         => [
+          "field"          => "id",
+          "direction"      => "desc"
+      ]
+    ];
+
+    /* TODO: add logic here that grabs field names from the relevant object,
+      then only accepts overwriting customSort['field'] if it matches one
+      of those fields.
+
+    Similar to the below, which is in
+
+    $objectFields = [];
+    $objectFieldArray = (new $className())->getFields();
+    foreach ($objectFieldArray as $k=>$v) {
+      $objectFields[] = $k;
     }
+
+     */
+
+    // Merge provided options with defaults
+    $this->options = array_replace_recursive($defaults, $this->userOptions);
+    
   }
 
   /*
@@ -46,6 +63,13 @@ class ObjectController extends Database {
   public function readAll(): array|bool {
 
     $tableName = "obj_".$this->objectName;
+    $className = $this->objectName."Object";
+
+    $objectFields = [];
+    $objectFieldArray = (new $className())->getFields();
+    foreach ($objectFieldArray as $k=>$v) {
+      $objectFields[] = $k;
+    }
 
     //Table name must only be Alpha+Underscore
     if (preg_match($this->regexPattern, $tableName)) {
