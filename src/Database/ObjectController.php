@@ -285,15 +285,6 @@ class ObjectController extends Database {
 
     $fields = $object->getFields();
 
-
-
-
-
-
-
-
-
-
     // if the object has an ID already, it's an UPDATE query.
     if (is_int($object->id())) {
 
