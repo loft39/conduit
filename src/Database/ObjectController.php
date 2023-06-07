@@ -3,6 +3,7 @@
 namespace Conduit\Database;
 
 use Conduit\Objects\GenericObject;
+use http\Exception\InvalidArgumentException;
 use PDO;
 use PDOException;
 
@@ -23,7 +24,11 @@ class ObjectController extends Database {
       $this->options = [
         "includeUnpublished" => false,
         "sortByDateAdded"    => false,
-        "limit"              => false
+        "limit"              => false,
+        "customSort"         => [
+            "field"          => "id",
+            "direction"      => "desc"
+        ]
       ];
     }
   }
@@ -51,11 +56,7 @@ class ObjectController extends Database {
         $query .= " WHERE `published` = 1";
       }
 
-      if ($this->options['sortByDateAdded']) {
-        $query .= " ORDER BY `dateadded` DESC";
-      } else {
-        $query .= " ORDER BY `sortorder` DESC";
-      }
+      $query .= " ORDER BY `".$this->options['customSort']['field']."` ".$this->options['customSort']['direction'];
 
       if ($this->options['limit'] !== false) {
         $l = (int)$this->options['limit'];
@@ -211,10 +212,10 @@ class ObjectController extends Database {
 
 
 
-  public function create(Array $fields): Bool | PDOException {
+  public function create(Array $fields): bool | PDOException {
 
     if (empty($fields)) {
-      // TODO: throw array empty exception
+      throw new InvalidArgumentException("Fields array cannot be empty.");
     }
 
     $tableName = "obj_".$this->objectName;
@@ -249,11 +250,8 @@ class ObjectController extends Database {
         $columns[] = "`$property`";
         $values[] = ":$property";
 
-        if ($value == "") {
-          $execute[":$property"] = null;
-        } else {
-          $execute[":$property"] = $value;
-        }
+        $execute[":$property"] = ($value == "") ? null : $value;
+
       }
     }
 
@@ -274,10 +272,75 @@ class ObjectController extends Database {
     }
   }
 
-  public function save(GenericObject $object): bool {
+  public function save(GenericObject $object, Array $fields): bool | PDOException {
 
-    //TODO: accept an object, grab the DB fields from $object->getFields(), and persist it to the database.
-    // create a new one if no ID, or if one exists with that ID, replace it.
+    if (empty($fields)) {
+      throw new InvalidArgumentException("Fields array cannot be empty.");
+    }
+
+    $tableName = "obj_".$this->objectName;
+
+    // Get generic fields from a new, blank GenericObject
+    $genericFields = [];
+    $genericFieldArray = (new GenericObject())->getFields();
+    foreach ($genericFieldArray as $k=>$v) {
+      $genericFields[] = $k;
+    }
+
+    // Sets the default values for $genericFields
+    $defaultFields = [
+        "sortorder" => 0,
+        "dateadded" => "NOW()",
+        "published" => 1
+    ];
+
+    // Inits the arrays used to build the SQL query
+    $columns = [];
+    $values = [];
+    $execute = [];
+
+    // Add fields from the create() method's array argument
+    foreach ($fields as $property => $value) {
+
+      // if it's one of the default values, overwrite the value in $defaultFields,
+      if (in_array($property, $genericFields)) {
+        $defaultFields[$property] = $value;
+      } else {
+        // otherwise add the column and value to their respective arrays
+        $columns[] = "`$property`";
+        $values[] = ":$property";
+
+        $execute[":$property"] = ($value == "") ? null : $value;
+
+      }
+    }
+
+    $query = "INSERT INTO `$tableName` (";
+    $query .= "`id`, `sortorder`, `dateadded`, `published`, ";
+    $query .= implode(', ', $columns);
+    $query .= ") VALUES (";
+    $query .= "NULL, ".$defaultFields['sortorder'].", ".$defaultFields['dateadded'].", ".$defaultFields['published'].", ";
+    $query .= implode(', ', $values);
+    $query .= ");";
+
+    try {
+      $q = $this->dbObject->prepare($query);
+      $q->execute($execute);
+      return true;
+    } catch (PDOException $e) {
+      return $e;
+    }
+
+
+
+
+
+
+
+
+
+
+
 
     // Get the table name from the object by stripping "Object" from the end and
     // prepending "obj_".
