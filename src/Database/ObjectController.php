@@ -248,7 +248,12 @@ class ObjectController extends Database {
         // otherwise add the column and value to their respective arrays
         $columns[] = "`$property`";
         $values[] = ":$property";
-        $execute[":$property"] = $value;
+
+        if ($value == "") {
+          $execute[":$property"] = null;
+        } else {
+          $execute[":$property"] = $value;
+        }
       }
     }
 
