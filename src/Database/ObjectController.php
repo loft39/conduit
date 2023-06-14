@@ -25,7 +25,7 @@ class ObjectController extends Database {
       "includeUnpublished" => false,
       "limit"              => false,
       "customSort"         => [
-          "field"          => "id",
+          "field"          => "sortorder",
           "direction"      => "desc"
       ]
     ];
