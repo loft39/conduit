@@ -23,7 +23,6 @@ class ObjectController extends Database {
     // Default options
     $defaults = [
       "includeUnpublished" => false,
-      "sortByDateAdded"    => false,
       "limit"              => false,
       "customSort"         => [
           "field"          => "id",
@@ -115,11 +114,7 @@ class ObjectController extends Database {
         $query .= " AND `published` = 1";
       }
 
-      if ($this->options['sortByDateAdded']) {
-        $query .= " ORDER BY `dateadded` DESC";
-      } else {
-        $query .= " ORDER BY `sortorder` DESC";
-      }
+      $query .= " ORDER BY `".$this->options['customSort']['field']."` ".$this->options['customSort']['direction'];
 
       if ($this->options['limit'] !== false) {
         $l = (int)$this->options['limit'];
@@ -154,11 +149,7 @@ class ObjectController extends Database {
         $query .= " AND `published` = 1";
       }
 
-      if ($this->options['sortByDateAdded']) {
-        $query .= " ORDER BY `dateadded` DESC";
-      } else {
-        $query .= " ORDER BY `sortorder` DESC";
-      }
+      $query .= " ORDER BY `".$this->options['customSort']['field']."` ".$this->options['customSort']['direction'];
 
       $query .= " LIMIT 1;";
 
@@ -208,11 +199,7 @@ class ObjectController extends Database {
         $query .= " AND `published` = 1";
       }
 
-      if ($this->options['sortByDateAdded']) {
-        $query .= " ORDER BY `dateadded` DESC";
-      } else {
-        $query .= " ORDER BY `sortorder` DESC";
-      }
+      $query .= " ORDER BY `".$this->options['customSort']['field']."` ".$this->options['customSort']['direction'];
 
       if ($this->options['limit'] !== false) {
         $l = (int)$this->options['limit'];
