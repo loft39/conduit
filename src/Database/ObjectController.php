@@ -14,7 +14,7 @@ class ObjectController extends Database {
 
   public function __construct(
     private readonly String $objectName,
-    private readonly Array|null $userOptions = null
+    private readonly Array|null $userOptions = []
   )
   {
     parent::__construct();
