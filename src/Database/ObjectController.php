@@ -283,7 +283,7 @@ class ObjectController extends Database {
     }
   }
 
-  public function save(GenericObject $object, Array $fields): bool | PDOException {
+  public function update(GenericObject $object, Array $fields): bool | PDOException {
 
     if (empty($fields)) {
       throw new InvalidArgumentException("Fields array cannot be empty.");
@@ -382,6 +382,72 @@ class ObjectController extends Database {
 
 
 
+  }
+
+  public function publish(GenericObject $object): bool {
+
+    $tableName = "obj_".$this->objectName;
+
+    //Table name and search field must only be Alpha+Underscore
+    if (preg_match("/^[a-zA-Z0-9]([a-zA-Z0-9_])+$/i", $tableName)) {
+
+      try {
+        $obj = $this->dbObject->prepare("UPDATE `$tableName` set `published` = 1 WHERE `$tableName`.`id` = :id");
+        $obj->execute([':id' => (int)$object->id()]);
+        return true;
+      } catch (PDOException) {
+        return false;
+      }
+    } else {
+      //TODO: throw new invalid object name exception
+      return false;
+    }
+  }
+
+  public function unpublish(GenericObject $object): bool {
+
+    $tableName = "obj_".$this->objectName;
+
+    //Table name and search field must only be Alpha+Underscore
+    if (preg_match("/^[a-zA-Z0-9]([a-zA-Z0-9_])+$/i", $tableName)) {
+
+      try {
+        $obj = $this->dbObject->prepare("UPDATE `$tableName` set `published` = 0 WHERE `$tableName`.`id` = :id");
+        $obj->execute([':id' => (int)$object->id()]);
+        return true;
+      } catch (PDOException) {
+        return false;
+      }
+    } else {
+      //TODO: throw new invalid object name exception
+      return false;
+    }
+  }
+
+  public function destroy(GenericObject|int $object): bool {
+
+    $tableName = "obj_".$this->objectName;
+
+    if (gettype($object) == "object") {
+      $id = (int)$object->id();
+    } else {
+      $id = (int)$object;
+    }
+
+    //Table name and search field must only be Alpha+Underscore
+    if (preg_match("/^[a-zA-Z0-9]([a-zA-Z0-9_])+$/i", $tableName)) {
+
+      try {
+        $obj = $this->dbObject->prepare("DELETE FROM `$tableName` WHERE `$tableName`.`id` = :id");
+        $obj->execute([':id' => $id]);
+        return true;
+      } catch (PDOException) {
+        return false;
+      }
+    } else {
+      //TODO: throw new invalid object name exception
+      return false;
+    }
   }
 
 }
