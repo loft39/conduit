@@ -305,13 +305,7 @@ class ObjectController extends Database {
 
     // Add fields from the create() method's array argument
     foreach ($fields as $property => $value) {
-
-      if (gettype($object) == "string") {
-        $updates[] = "`$property`='$value'";
-      } else {
-        $updates[] = "`$property`=$value";
-      }
-
+      $updates[] = "`$property`=:$property";
       $execute[":$property"] = ($value == "") ? null : $value;
     }
 
