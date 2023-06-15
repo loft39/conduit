@@ -283,7 +283,13 @@ class ObjectController extends Database {
     }
   }
 
-  public function update(GenericObject $object, Array $fields): bool | PDOException {
+  public function update(GenericObject|int $object, Array $fields): bool | PDOException {
+
+    if (gettype($object) == "object") {
+      $id = (int)$object->id();
+    } else {
+      $id = (int)$object;
+    }
 
     if (empty($fields)) {
       throw new InvalidArgumentException("Fields array cannot be empty.");
@@ -291,48 +297,27 @@ class ObjectController extends Database {
 
     $tableName = "obj_".$this->objectName;
 
-    // Get generic fields from a new, blank GenericObject
-    $genericFields = [];
-    $genericFieldArray = (new GenericObject())->getFields();
-    foreach ($genericFieldArray as $k=>$v) {
-      $genericFields[] = $k;
-    }
-
-    // Sets the default values for $genericFields
-    $defaultFields = [
-        "sortorder" => 0,
-        "dateadded" => "NOW()",
-        "published" => 1
-    ];
-
     // Inits the arrays used to build the SQL query
-    $columns = [];
-    $values = [];
+    $updates = [];
     $execute = [];
+
+    $execute[":id"] = $id;
 
     // Add fields from the create() method's array argument
     foreach ($fields as $property => $value) {
 
-      // if it's one of the default values, overwrite the value in $defaultFields,
-      if (in_array($property, $genericFields)) {
-        $defaultFields[$property] = $value;
+      if (gettype($object) == "string") {
+        $updates[] = "`$property`='$value'";
       } else {
-        // otherwise add the column and value to their respective arrays
-        $columns[] = "`$property`";
-        $values[] = ":$property";
-
-        $execute[":$property"] = ($value == "") ? null : $value;
-
+        $updates[] = "`$property`=$value";
       }
+
+      $execute[":$property"] = ($value == "") ? null : $value;
     }
 
-    $query = "INSERT INTO `$tableName` (";
-    $query .= "`id`, `sortorder`, `dateadded`, `published`, ";
-    $query .= implode(', ', $columns);
-    $query .= ") VALUES (";
-    $query .= "NULL, ".$defaultFields['sortorder'].", ".$defaultFields['dateadded'].", ".$defaultFields['published'].", ";
-    $query .= implode(', ', $values);
-    $query .= ");";
+    $query = "UPDATE `$tableName` SET ";
+    $query .= implode(", ", $updates);
+    $query .= " WHERE `id` = :id";
 
     try {
       $q = $this->dbObject->prepare($query);
