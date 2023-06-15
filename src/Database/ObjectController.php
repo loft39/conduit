@@ -2,6 +2,7 @@
 
 namespace Conduit\Database;
 
+use Conduit\Exceptions\Objects\InvalidObjectNameException;
 use Conduit\Objects\GenericObject;
 use Conduit\Exceptions\Objects\InvalidArgumentException;
 use PDO;
@@ -30,45 +31,18 @@ class ObjectController extends Database {
       ]
     ];
 
-    /* TODO: add logic here that grabs field names from the relevant object,
-      then only accepts overwriting customSort['field'] if it matches one
-      of those fields.
-
-    Similar to the below, which is in
-
-    $objectFields = [];
-    $objectFieldArray = (new $className())->getFields();
-    foreach ($objectFieldArray as $k=>$v) {
-      $objectFields[] = $k;
-    }
-
-     */
-
     // Merge provided options with defaults
     $this->options = array_replace_recursive($defaults, $this->userOptions);
     
   }
 
-  /*
-   * TODO: functions;
-   *
-   * Options:
-   * includeUnpublished | bool, default false |
-   *
-   * getAll()
-   *
+  /**
+   * @throws InvalidObjectNameException
    */
-
-  public function readAll(): array|bool {
+  public function readAll(): array {
 
     $tableName = "obj_".$this->objectName;
     $className = $this->objectName."Object";
-
-    $objectFields = [];
-    $objectFieldArray = (new $className())->getFields();
-    foreach ($objectFieldArray as $k=>$v) {
-      $objectFields[] = $k;
-    }
 
     //Table name must only be Alpha+Underscore
     if (preg_match($this->regexPattern, $tableName)) {
@@ -93,19 +67,21 @@ class ObjectController extends Database {
       //  or potentially create a new FileNotFoundException for all areas in Conduit?
       return $obj->fetchAll(PDO::FETCH_CLASS, $this->objectName . 'Object');
     } else {
-      //TODO: throw new invalid object name exception
-      return false;
+      throw new InvalidObjectNameException("Object name must be alphanumeric (and underscore)");
     }
   }
 
-  public function readAllWhere($field, $value): array|bool {
+  /**
+   * @throws InvalidObjectNameException
+   */
+  public function readAllWhere($field, $value): array {
 
     $tableName = "obj_".$this->objectName;
 
     //Table name and search field must only be Alpha+Underscore
     if (
-      preg_match("/^[a-zA-Z0-9]([a-zA-Z0-9_])+$/i", $tableName) &&
-      preg_match("/^[a-zA-Z0-9]([a-zA-Z0-9_])+$/i", $field)
+      preg_match($this->regexPattern, $tableName) &&
+      preg_match($this->regexPattern, $field)
     ) {
 
       $query = "SELECT * FROM `$tableName` WHERE `$field` = :value";
@@ -128,19 +104,21 @@ class ObjectController extends Database {
       //  or potentially create a new FileNotFoundException for all areas in Conduit?
       return $obj->fetchAll(PDO::FETCH_CLASS, $this->objectName . 'Object');
     } else {
-      //TODO: throw new invalid object name exception
-      return false;
+      throw new InvalidObjectNameException("Object name must be alphanumeric (and underscore)");
     }
   }
 
-  public function readSingleWhere($field, $value): object|bool {
+  /**
+   * @throws InvalidObjectNameException
+   */
+  public function readSingleWhere($field, $value): object {
 
     $tableName = "obj_".$this->objectName;
 
     //Table name and search field must only be Alpha+Underscore
     if (
-        preg_match("/^[a-zA-Z0-9]([a-zA-Z0-9_])+$/i", $tableName) &&
-        preg_match("/^[a-zA-Z0-9]([a-zA-Z0-9_])+$/i", $field)
+        preg_match($this->regexPattern, $tableName) &&
+        preg_match($this->regexPattern, $field)
     ) {
 
       $query = "SELECT * FROM `$tableName` WHERE `$field` = :value";
@@ -161,8 +139,7 @@ class ObjectController extends Database {
       //  or potentially create a new FileNotFoundException for all areas in Conduit?
       return $obj->fetchObject($this->objectName . 'Object');
     } else {
-      //TODO: throw new invalid object name exception
-      return false;
+      throw new InvalidObjectNameException("Object name must be alphanumeric (and underscore)");
     }
   }
 
@@ -173,7 +150,7 @@ class ObjectController extends Database {
 
     //Value to search for must only be Alpha+Underscore
     if (
-        preg_match("/^[a-zA-Z0-9]([a-zA-Z0-9_])+$/i", $value)
+        preg_match($this->regexPattern, $value)
     ) {
 
       $query = "SELECT * FROM `$tableName` WHERE ";
@@ -183,7 +160,7 @@ class ObjectController extends Database {
       foreach ($fields as $field) {
 
         //Each search field must only be Alpha+Underscore
-        if (preg_match("/^[a-zA-Z0-9]([a-zA-Z0-9_])+$/i", $field)) {
+        if (preg_match($this->regexPattern, $field)) {
 
           $fieldsSQL[] = "`$field` LIKE '%$value%'";
 
@@ -368,7 +345,7 @@ class ObjectController extends Database {
     $tableName = "obj_".$this->objectName;
 
     //Table name and search field must only be Alpha+Underscore
-    if (preg_match("/^[a-zA-Z0-9]([a-zA-Z0-9_])+$/i", $tableName)) {
+    if (preg_match($this->regexPattern, $tableName)) {
 
       try {
         $obj = $this->dbObject->prepare("UPDATE `$tableName` set `published` = 1 WHERE `$tableName`.`id` = :id");
@@ -388,7 +365,7 @@ class ObjectController extends Database {
     $tableName = "obj_".$this->objectName;
 
     //Table name and search field must only be Alpha+Underscore
-    if (preg_match("/^[a-zA-Z0-9]([a-zA-Z0-9_])+$/i", $tableName)) {
+    if (preg_match($this->regexPattern, $tableName)) {
 
       try {
         $obj = $this->dbObject->prepare("UPDATE `$tableName` set `published` = 0 WHERE `$tableName`.`id` = :id");
@@ -414,7 +391,7 @@ class ObjectController extends Database {
     }
 
     //Table name and search field must only be Alpha+Underscore
-    if (preg_match("/^[a-zA-Z0-9]([a-zA-Z0-9_])+$/i", $tableName)) {
+    if (preg_match($this->regexPattern, $tableName)) {
 
       try {
         $obj = $this->dbObject->prepare("DELETE FROM `$tableName` WHERE `$tableName`.`id` = :id");
