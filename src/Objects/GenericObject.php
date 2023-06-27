@@ -9,23 +9,23 @@ use Conduit\Exceptions\Database\InvalidDateAddedException;
 
 class GenericObject {
 
-  private int $id;
-  private int $sortorder;
-  private int $dateadded;
-  private int $published;
+  protected int $id;
+  protected int $sortorder;
+  protected string $dateadded;
+  protected int $published;
 
-  public function id(): int {
-    return $this->id;
+  public function id(): int|null {
+    return $this->id ?? null;
   }
 
-  public function sortOrder(): bool {
-    return $this->sortorder;
+  public function sortOrder(): bool|null {
+    return $this->sortorder ?? null;
   }
 
   /**
    * @throws InvalidDateAddedException
    */
-  public function dateAdded(): DateTime|bool {
+  public function dateAdded(): DateTime|null {
     if ($this->dateadded != "") {
       try {
         return new DateTime($this->dateadded);
@@ -33,12 +33,16 @@ class GenericObject {
         throw new InvalidDateAddedException("dateAdded field for this object cannot be parsed into DateTime object");
       }
     } else {
-      return false;
+      return null;
     }
   }
 
   public function published(): bool {
     return $this->published === 1;
+  }
+
+  public function getFields(): array {
+    return get_class_vars(get_class($this));
   }
   
 }
