@@ -1,4 +1,13 @@
 site_name: Conduit
-theme: terminal
+theme: readthedocs
 markdown_extensions:
   - admonition
+nav:
+  - "Home": "index.md"
+  - "Introduction":
+      - "What is Conduit?": "introduction/what.md"
+      - "Contributing": "introduction/contributing.md"
+  - "Getting Started":
+      - "Installation": "getting-started/installation.md"
+  - "Class Reference": "index.md"
+  - "Docs TODO": "todo.md"

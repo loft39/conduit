@@ -41,8 +41,6 @@ class RouterController
         ]
     ];
 
-    //TODO: Validation for routes/throwing exceptions goes here
-
     if (!array_key_exists("routes", $this->appConfig)) {
       throw new MalformedRoutesException("'Routes' block not present in app.yml");
     } else {

@@ -8,7 +8,7 @@ use Exception;
 //Packages
 use AltoRouter;
 use Twig\Environment;
-use Twig\Extension\DebugExtension;;
+use Twig\Extension\DebugExtension;
 use Twig\Extra\Intl\IntlExtension;
 use Twig\Extra\String\StringExtension;
 use Twig\Loader\FilesystemLoader;
@@ -32,29 +32,26 @@ class App
 
   private array $appConfig;
 
-  function __construct()
+  public function __construct()
   {
-    $this->exceptionRenderer = new ExceptionRenderer;
+    $this->exceptionRenderer = new ExceptionRenderer();
 
     try {
-      $this->yamlParser = new YamlParser;
-
-      //Pull config
+      $this->yamlParser = new YamlParser();
       $this->appConfig = $this->yamlParser->configRead();
-      $this->altoRouter = new AltoRouter;
-
-      $this->pluginManager = new PluginManager;
+      $this->altoRouter = new AltoRouter();
+      $this->pluginManager = new PluginManager();
 
       if ($this->appConfig['target'] == "development") {
         $this->twig = new Environment(
-            new FilesystemLoader($_SERVER['DOCUMENT_ROOT'] . "/../app/templates"), [
-              'debug' => true
-            ]
+          new FilesystemLoader($_SERVER['DOCUMENT_ROOT'] . "/../app/templates"), [
+            'debug' => true
+          ]
         );
         $this->twig->addExtension(new DebugExtension());
       } else {
         $this->twig = new Environment(
-            new FilesystemLoader($_SERVER['DOCUMENT_ROOT'] . "/../app/templates")
+          new FilesystemLoader($_SERVER['DOCUMENT_ROOT'] . "/../app/templates")
         );
       }
 
@@ -72,7 +69,7 @@ class App
     }
   }
 
-  function run(): void
+  public function run(): void
   {
     try {
       $this->pluginManager->loadPlugins();

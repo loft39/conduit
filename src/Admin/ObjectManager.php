@@ -18,7 +18,7 @@ class ObjectManager
    */
   public static function create($event): void {
 
-    $db = new Database;
+    $db = new Database();
     $twig = new Environment((new FilesystemLoader(__DIR__ . "/Templates")));
 
     echo "\n";

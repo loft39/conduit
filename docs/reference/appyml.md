@@ -27,19 +27,19 @@ plugins:
 
 ***
 
-- ## `name`
+- ### `name`
   The name of your application. This is available globally in templates as `app.name`.
 
-- ## `version`
+- ### `version`
   The current version of your application. This is available globally in templates as `app.version`.
 
-- ## `target`
+- ### `target`
   The target of your application. This will be either `development` or `production`, depending on where the application is running. Running an application with a `development` target will show warnings/exceptions instead of a default 500 page, so you should swap this to `production` when deploying. This is available globally in templates as `app.target`.
 
-- ## `database`
+- ### `database`
   If your app uses a database, it's connection details go here. Currently MySQL (and derivatives), and SQLite are supported.
 
-    - ### Driver (`mysql` or `sqlite`)
+    - ##### Driver (`mysql` or `sqlite`)
     The first nested key of `database` defines what DB driver your app uses.
 
         - ### `host` (MySQL)
