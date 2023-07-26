@@ -260,6 +260,17 @@ class ObjectController extends Database {
     }
   }
 
+  public function lastInsertId(): int|PDOException {
+    try {
+      $q = $this->dbObject->prepare("SELECT LAST_INSERT_ID();");
+      $q->execute();
+      $id = $q->fetch();
+      return (int)$id['id'];
+    } catch (PDOException $e) {
+      return $e;
+    }
+  }
+
   public function update(GenericObject|int $object, Array $fields): bool | PDOException {
 
     if (gettype($object) == "object") {
