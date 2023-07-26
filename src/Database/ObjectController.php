@@ -200,7 +200,7 @@ class ObjectController extends Database {
 
 
 
-  public function create(Array $fields): bool | PDOException {
+  public function create(Array $fields, bool $returnID = false): bool | int | PDOException {
 
     if (empty($fields)) {
       throw new InvalidArgumentException("Fields array cannot be empty.");
@@ -254,18 +254,11 @@ class ObjectController extends Database {
     try {
       $q = $this->dbObject->prepare($query);
       $q->execute($execute);
-      return true;
-    } catch (PDOException $e) {
-      return $e;
-    }
-  }
-
-  public function lastInsertId(): int|PDOException {
-    try {
-      $q = $this->dbObject->prepare("SELECT LAST_INSERT_ID();");
-      $q->execute();
-      $id = $q->fetch();
-      return (int)$id['id'];
+      if ($returnID) {
+        return (int)$this->dbObject->lastInsertId();
+      } else {
+        return true;
+      }
     } catch (PDOException $e) {
       return $e;
     }
