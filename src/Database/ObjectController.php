@@ -19,7 +19,7 @@ class ObjectController extends Database {
   )
   {
     parent::__construct();
-    require($_SERVER['DOCUMENT_ROOT'] . "/../app/objects/" . $this->objectName . "Object.php");
+    require_once($_SERVER['DOCUMENT_ROOT'] . "/../app/objects/" . $this->objectName . "Object.php");
 
     // Default options
     $defaults = [
