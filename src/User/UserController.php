@@ -41,6 +41,13 @@ class UserController extends Database {
 
   }
 
+  /**
+   * @throw AuthError;
+   * @throw InvalidEmailException;
+   * @throw InvalidPasswordException;
+   * @throw UserAlreadyExistsException;
+   * @throw UnknownIdException;
+   */ 
   public function create(
     string $username,
     string $email,
@@ -62,21 +69,11 @@ class UserController extends Database {
       //Add their relevant role
       $this->auth->admin()->addRoleForUserById($id, $role);
 
+    } finally {
       //If the php-auth function returned an ID, the role assignment worked, and the PDO statement was successful,
       // return true, otherwise something broke so return false.
       return is_int($id);
-
-    } catch (
-      AuthError |
-      InvalidEmailException |
-      InvalidPasswordException |
-      UserAlreadyExistsException |
-      UnknownIdException $e
-    ) {
-      die($e->getMessage());
-      return false;
     }
-
   }
 
 }
