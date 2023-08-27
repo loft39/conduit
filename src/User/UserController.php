@@ -6,11 +6,8 @@ use Conduit\Database\Database;
 use Conduit\User\Role;
 
 use Delight\Auth\Auth;
-use Delight\Auth\AuthError;
-use Delight\Auth\InvalidEmailException;
-use Delight\Auth\InvalidPasswordException;
-use Delight\Auth\UnknownIdException;
-use Delight\Auth\UserAlreadyExistsException;
+
+use Conduit\Exceptions\User\UserNotLoggedInException;
 
 class UserController extends Database {
 
@@ -42,17 +39,30 @@ class UserController extends Database {
   }
 
   /**
-   * @throw AuthError;
-   * @throw InvalidEmailException;
-   * @throw InvalidPasswordException;
-   * @throw UserAlreadyExistsException;
-   * @throw UnknownIdException;
+   * Creates a new user.
+   *
+   * Takes a raw username, email, password, and Role enum (these are all sanitised),
+   * and then creates a user by wrapping the delight-im/php-auth admin create method.
+   *
+   * @param string $username The users's desired username
+   * @param string #email    The user's email address
+   * @param string $password The user's password
+   * @param Role   $role     The user's role constant
+   *                         (Default: Role::User)
+   *
+   * @throw AuthError
+   * @throw InvalidEmailException
+   * @throw InvalidPasswordException
+   * @throw UserAlreadyExistsException
+   * @throw UnknownIdException
+   *
+   * @return bool
    */ 
   public function create(
     string $username,
     string $email,
     string $password,
-    Role $role
+    Role $role = Role::User
   ): bool {
 
     // Sanitise user input
@@ -74,6 +84,25 @@ class UserController extends Database {
       // return true, otherwise something broke so return false.
       return is_int($id);
     }
+  }
+
+
+  /**
+   * @throws AuthError 
+   */
+  public function logout(): bool {
+
+    if (!$this->auth->isLoggedIn()){
+      throw new UserNotLoggedInException("No user currently logged in.");
+    } else {
+      try {
+        $this->auth->logOut();
+        $this->auth->destroySession();
+      } finally {
+        return true;
+      }
+    }
+
   }
 
 }
