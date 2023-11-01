@@ -23,7 +23,7 @@ class RouterController
   /**
    * @throws MalformedRoutesException
    */
-  public function __construct(AltoRouter $altoRouter, Environment $twig, array $appConfig, array $mountedPlugins)
+  public function __construct(AltoRouter $altoRouter, Environment $twig, array $appConfig)
   {
     $this->appConfig = $appConfig;
     $this->altoRouter = $altoRouter;
@@ -38,8 +38,7 @@ class RouterController
             "name" => $appConfig['name'],
             "version" => $appConfig['version'],
             "target" => $appConfig['target']
-        ],
-        "plugins" => $mountedPlugins
+        ]
     ];
 
     if (!array_key_exists("routes", $this->appConfig)) {
@@ -47,6 +46,12 @@ class RouterController
     } else {
       $this->routes = $this->appConfig['routes'];
     }
+  }
+
+  public function attachPlugins(array $pluginObjects): bool
+  {
+    $this->defaultData['plugins'] = $pluginObjects;
+    return true;
   }
 
   /**

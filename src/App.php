@@ -57,17 +57,19 @@ class App
       $this->twig->addExtension(new IntlExtension());
       $this->twig->addExtension(new StringExtension());
 
+
+      $this->router = new RouterController(
+        $this->altoRouter,
+        $this->twig,
+        $this->appConfig
+      );
+
       // Router controller is passed to the plugin manager so each plugin has access
       // to create routes
       $this->pluginManager = new PluginManager($this->router);
       $this->pluginManager->loadPlugins();
 
-      $this->router = new RouterController(
-        $this->altoRouter,
-        $this->twig,
-        $this->appConfig,
-        $this->pluginManager->mountedPlugins()
-      );
+      $this->router->attachPlugins($this->pluginManager->mountedPlugins());
 
       $this->router->attachRoutes();
       //
