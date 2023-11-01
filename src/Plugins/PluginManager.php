@@ -22,7 +22,7 @@ class PluginManager
     foreach ($this->listing as $plugin) {
       if (is_dir($_SERVER['DOCUMENT_ROOT'] . "/../plugins/$plugin")) {
         require_once($_SERVER['DOCUMENT_ROOT'] . "/../plugins/$plugin/$plugin.php");
-        $fullClassName = "\Conduit\Plugins\\".$plugin";
+        $fullClassName = "\Conduit\Plugins\\".$plugin;
         $this->mountedPlugins[$plugin] = (new $fullClassName($this->routerPassthrough));
       }
     }
