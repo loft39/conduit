@@ -23,7 +23,7 @@ class RouterController
   /**
    * @throws MalformedRoutesException
    */
-  public function __construct(AltoRouter $altoRouter, Environment $twig, array $appConfig)
+  public function __construct(AltoRouter $altoRouter, Environment $twig, array $appConfig, array $mountedPlugins)
   {
     $this->appConfig = $appConfig;
     $this->altoRouter = $altoRouter;
@@ -38,7 +38,8 @@ class RouterController
             "name" => $appConfig['name'],
             "version" => $appConfig['version'],
             "target" => $appConfig['target']
-        ]
+        ],
+        "plugins" => $mountedPlugins
     ];
 
     if (!array_key_exists("routes", $this->appConfig)) {
@@ -52,10 +53,11 @@ class RouterController
    * @throws MalformedRoutesException
    * @throws Exception
    */
-  public function attachRoutes(): void
+  public function attachRoutes(null|array $routes = null): void
   {
+    $routesArray = $routes ?? $this->routes;
 
-    foreach ($this->routes as $route=>$methods) {
+    foreach ($routesArray as $route=>$methods) {
 
       //Throw exceptions if the method (HTTP verb) or twig template path are missing.
       if (!array_key_exists('GET', $methods) && !array_key_exists('POST', $methods)) {
