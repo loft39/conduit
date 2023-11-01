@@ -136,7 +136,7 @@ class RouterController
           exit;
         } else {
           //otherwise just require the middleware.
-          $exec = $className::register($match['params']);
+          $exec = $className::register($match['params'], $this->defaultData['plugins']);
           //and redirect if key is supplied
           if ($exec && array_key_exists("redirect", $config)) {
             header("Location: ".$config['redirect']);
