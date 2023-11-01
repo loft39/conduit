@@ -131,7 +131,7 @@ class RouterController
           //Require the middleware and spread its return array after the default app data
           echo $this->twig->render(
               $config['template'],
-              [...$this->defaultData, ...$className::register($match['params'])]
+              [...$this->defaultData, ...$className::register($match['params'], $this->defaultData['plugins'])]
           );
           exit;
         } else {
