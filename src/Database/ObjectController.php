@@ -284,6 +284,28 @@ class ObjectController extends Database {
     return $objects;
   }
 
+  /**
+   * @throws InvalidObjectNameException
+   */
+  public function rawquery($query): array {
+
+    $tableName = "obj_".$this->objectName;
+    $className = $this->objectName."Object";
+
+    //Table name must only be Alpha+Underscore
+    if (preg_match($this->regexPattern, $tableName)) {
+
+      $obj = $this->dbObject->prepare($query);
+      $obj->execute();
+
+      // TODO: throw exception if class not found, maybe create a new exception,
+      //  or potentially create a new FileNotFoundException for all areas in Conduit?
+      return $obj->fetchAll(PDO::FETCH_CLASS, $this->objectName . 'Object');
+    } else {
+      throw new InvalidObjectNameException("Object name must be alphanumeric (and underscore)");
+    }
+  }
+
   public function create(Array $fields, bool $returnID = false): bool | int | PDOException {
 
     if (empty($fields)) {
