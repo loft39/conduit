@@ -2,8 +2,10 @@
 
 namespace Conduit\User;
 
-enum Role: int
+use Delight\Auth\Role as DelightRole;
+
+final class Role
 {
-  case Admin = 1;
-  case User  = 2;
+  const Admin = DelightRole::ADMIN;
+  const User  = DelightRole::AUTHOR;
 }

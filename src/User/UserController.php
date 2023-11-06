@@ -47,7 +47,7 @@ class UserController extends Database {
    * @param string $username The users's desired username
    * @param string #email    The user's email address
    * @param string $password The user's password
-   * @param Role   $role     The user's role constant
+   * @param Role   $role     The user's role constant, either Role::Admin, or Role::User
    *                         (Default: Role::User)
    *
    * @throw AuthError
@@ -88,7 +88,7 @@ class UserController extends Database {
 
 
   /**
-   * @throws AuthError 
+   * @throws AuthError
    */
   public function logout(): bool {
 
