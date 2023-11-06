@@ -111,6 +111,42 @@ class ObjectController extends Database {
   /**
    * @throws InvalidObjectNameException
    */
+  public function readAllWhereRaw($queryString): array {
+
+    $tableName = "obj_".$this->objectName;
+
+    //Table name and search field must only be Alpha+Underscore
+    if (
+      preg_match($this->regexPattern, $tableName)
+    ) {
+
+      $query = "SELECT * FROM `$tableName` WHERE $queryString";
+
+      if (!$this->options['includeUnpublished']) {
+        $query .= " AND `published` = 1";
+      }
+
+      $query .= " ORDER BY `".$this->options['customSort']['field']."` ".$this->options['customSort']['direction'];
+
+      if ($this->options['limit'] !== false) {
+        $l = (int)$this->options['limit'];
+        $query .= " LIMIT $l;";
+      }
+
+      $obj = $this->dbObject->prepare($query);
+      $obj->execute();
+
+      // TODO: throw exception if class not found, maybe create a new exception,
+      //  or potentially create a new FileNotFoundException for all areas in Conduit?
+      return $obj->fetchAll(PDO::FETCH_CLASS, $this->objectName . 'Object');
+    } else {
+      throw new InvalidObjectNameException("Object name must be alphanumeric (and underscore)");
+    }
+  }
+
+  /**
+   * @throws InvalidObjectNameException
+   */
   public function readSingleWhere($field, $value): object {
 
     $tableName = "obj_".$this->objectName;
