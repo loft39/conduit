@@ -204,56 +204,46 @@ class ObjectController extends Database {
     $tableName = "obj_".$this->objectName;
     $objects = null;
 
-    //Value to search for must only be Alpha+Underscore
-    if (
-        preg_match($this->regexPattern, $value)
-    ) {
+    $query = "SELECT * FROM `$tableName` WHERE ";
 
-      $query = "SELECT * FROM `$tableName` WHERE ";
+    $columnsSQL = Array();
 
-      $columnsSQL = Array();
+    foreach ($fields as $column=>$value) {
 
-      foreach ($fields as $column=>$value) {
+      //Each search field must only be Alpha+Underscore
+      if (preg_match($this->regexPattern, $column)) {
 
-        //Each search field must only be Alpha+Underscore
-        if (preg_match($this->regexPattern, $column)) {
+        $columnsSQL[] = "`$column` = '$value'";
 
-          $columnsSQL[] = "`$column` = '$value'";
-
-        } else {
-          //TODO: throw new invalid field name exception
-
-        }
-      }
-
-      if ($inclusive) {
-        $query .= "(".implode(" AND ", $columnsSQL).")";
       } else {
-        $query .= "(".implode(" OR ", $columnsSQL).")";
+        //TODO: throw new invalid field name exception
+
       }
-
-      if (!$this->options['includeUnpublished']) {
-        $query .= " AND `published` = 1";
-      }
-
-      $query .= " ORDER BY `".$this->options['customSort']['field']."` ".$this->options['customSort']['direction'];
-
-      if ($this->options['limit'] !== false) {
-        $l = (int)$this->options['limit'];
-        $query .= " LIMIT $l;";
-      }
-
-      $obj = $this->dbObject->prepare($query);
-      $obj->execute();
-
-      // TODO: throw exception if class not found, maybe create a new exception,
-      //  or potentially create a new FileNotFoundException for all areas in Conduit?
-      $objects = $obj->fetchAll(PDO::FETCH_CLASS, $this->objectName . 'Object');
-
-    } else {
-      //TODO: throw new invalid value exception
-
     }
+
+    if ($inclusive) {
+      $query .= "(".implode(" AND ", $columnsSQL).")";
+    } else {
+      $query .= "(".implode(" OR ", $columnsSQL).")";
+    }
+
+    if (!$this->options['includeUnpublished']) {
+      $query .= " AND `published` = 1";
+    }
+
+    $query .= " ORDER BY `".$this->options['customSort']['field']."` ".$this->options['customSort']['direction'];
+
+    if ($this->options['limit'] !== false) {
+      $l = (int)$this->options['limit'];
+      $query .= " LIMIT $l;";
+    }
+
+    $obj = $this->dbObject->prepare($query);
+    $obj->execute();
+
+    // TODO: throw exception if class not found, maybe create a new exception,
+    //  or potentially create a new FileNotFoundException for all areas in Conduit?
+    $objects = $obj->fetchAll(PDO::FETCH_CLASS, $this->objectName . 'Object');
 
     return $objects;
   }
