@@ -15,6 +15,7 @@ class PluginManager
   {
     $this->listing = array_diff(scandir($_SERVER['DOCUMENT_ROOT'].'/../plugins'), array('..', '.'));
     $this->routerPassthrough = $router;
+    $this->mountedPlugins = [];
   }
 
   public function loadPlugins(): void
