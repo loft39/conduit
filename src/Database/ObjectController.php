@@ -147,7 +147,7 @@ class ObjectController extends Database {
   /**
    * @throws InvalidObjectNameException
    */
-  public function readSingleWhere($field, $value): object {
+  public function readSingleWhere($field, $value): object|bool {
 
     $tableName = "obj_".$this->objectName;
 
