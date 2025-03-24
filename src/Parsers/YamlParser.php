@@ -31,7 +31,7 @@ class YamlParser
      * replace with its relevant environment variable.
      */
     array_walk_recursive($config, function (&$item) {
-      if (str_starts_with($item, '$')) {
+      if (str_starts_with($item ?? '', '$')) {
         $item = getenv(substr($item, 1));
       }
     });
