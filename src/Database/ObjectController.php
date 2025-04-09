@@ -26,8 +26,7 @@ class ObjectController extends Database {
       "includeUnpublished" => false,
       "limit"              => false,
       "customSort"         => [
-          "field"          => "sortorder",
-          "direction"      => "desc"
+          ["sortorder", "desc"]
       ]
     ];
 
@@ -53,7 +52,7 @@ class ObjectController extends Database {
         $query .= " WHERE `published` = 1";
       }
 
-      $query .= " ORDER BY `".$this->options['customSort']['field']."` ".$this->options['customSort']['direction'];
+      $query .= $this->sortQuery();
 
       if ($this->options['limit'] !== false) {
         $l = (int)$this->options['limit'];
@@ -90,7 +89,7 @@ class ObjectController extends Database {
         $query .= " AND `published` = 1";
       }
 
-      $query .= " ORDER BY `".$this->options['customSort']['field']."` ".$this->options['customSort']['direction'];
+      $query .= $this->sortQuery();
 
       if ($this->options['limit'] !== false) {
         $l = (int)$this->options['limit'];
@@ -126,7 +125,7 @@ class ObjectController extends Database {
         $query .= " AND `published` = 1";
       }
 
-      $query .= " ORDER BY `".$this->options['customSort']['field']."` ".$this->options['customSort']['direction'];
+      $query .= $this->sortQuery();
 
       if ($this->options['limit'] !== false) {
         $l = (int)$this->options['limit'];
@@ -163,7 +162,7 @@ class ObjectController extends Database {
         $query .= " AND `published` = 1";
       }
 
-      $query .= " ORDER BY `".$this->options['customSort']['field']."` ".$this->options['customSort']['direction'];
+      $query .= $this->sortQuery();
 
       $query .= " LIMIT 1;";
 
@@ -205,7 +204,7 @@ class ObjectController extends Database {
       $query .= " AND `published` = 1";
     }
 
-    $query .= " ORDER BY `".$this->options['customSort']['field']."` ".$this->options['customSort']['direction'];
+    $query .= $this->sortQuery();
 
     if ($this->options['limit'] !== false) {
       $l = (int)$this->options['limit'];
@@ -254,7 +253,7 @@ class ObjectController extends Database {
       $query .= " AND `published` = 1";
     }
 
-    $query .= " ORDER BY `".$this->options['customSort']['field']."` ".$this->options['customSort']['direction'];
+    $query .= $this->sortQuery();
 
     if ($this->options['limit'] !== false) {
       $l = (int)$this->options['limit'];
@@ -396,45 +395,6 @@ class ObjectController extends Database {
     }
 
 
-/*
-
-
-
-
-    // Get the table name from the object by stripping "Object" from the end and
-    // prepending "obj_".
-    $tableName = "obj_" . substr(get_class($object), 0, -6);
-
-    $fields = $object->getFields();
-
-    // if the object has an ID already, it's an UPDATE query.
-    if (is_int($object->id())) {
-
-      $existing = $this->dbObject->prepare("SELECT `id` from :table WHERE `id` = :id");
-
-      $existing->execute([
-          ":table" => $tableName,
-          ":id" => $object->id()
-      ]);
-
-      if ($existing->fetch(PDO::FETCH_ASSOC)) {
-        // It matches an existing object, update it.
-        // UPDATE
-      } else {
-        // TODO: throw error, object has ID but it doesn't match an existing entry in the table.
-        //  new objects to be inserted should have NULL ID.
-      }
-
-    } else {
-      // the object doesn't have an ID, it's a new addition.
-      // INSERT
-    }
-
-    return true;
-*/
-
-
-
   }
 
   public function publish(GenericObject $object): bool {
@@ -501,6 +461,30 @@ class ObjectController extends Database {
       //TODO: throw new invalid object name exception
       return false;
     }
+  }
+
+  private function sortQuery(): string {
+
+    // Add all sortable fields to $sortFields array
+    $sortFields = $this->options['customSort'];
+    $queryString = " ORDER BY ";
+    $queryStringPieces = [];
+
+    foreach ($sortFields as $field) {
+
+      if (is_string($field[1])) {
+        $queryStringPieces[] = "`$field[0]` $field[1]";
+      } elseif (is_array($field[1])) {
+        $sortValues = "'".implode("','", $field[1])."'";
+        $queryStringPieces[] = "FIELD(`$field[0]`, $sortValues)";
+      }
+
+    }
+
+    $queryString .= implode(", ", $queryStringPieces);
+
+    return $queryString;
+
   }
 
 }
