@@ -179,6 +179,8 @@ class ObjectController extends Database {
     }
   }
 
+  // TODO: this need documenting that the field(s) being searched
+  // need a fulltext index
   public function search($fields, $value): array|null {
 
     $tableName = "obj_".$this->objectName;
@@ -189,16 +191,14 @@ class ObjectController extends Database {
         preg_match($this->regexPattern, $value)
     ) {
 
-      $query = "SELECT * FROM `$tableName` WHERE ";
-
-      $fieldsSQL = Array();
+      $fieldsArray = Array();
 
       foreach ($fields as $field) {
 
         //Each search field must only be Alpha+Underscore
         if (preg_match($this->regexPattern, $field)) {
 
-          $fieldsSQL[] = "`$field` LIKE '%$value%'";
+          $fieldsArray[] = $field;
 
         } else {
           //TODO: throw new invalid field name exception
@@ -206,13 +206,16 @@ class ObjectController extends Database {
         }
       }
 
-      $query .= "(".implode(" OR ", $fieldsSQL).")";
+      $fieldsSQL = implode(',',$fieldsArray);
+
+      $query = "SELECT *, MATCH($fieldsSQL) AGAINST ('$value') AS Score FROM `$tableName` WHERE MATCH($fieldsSQL) AGAINST ('$value')";
 
       if (!$this->options['includeUnpublished']) {
         $query .= " AND `published` = 1";
       }
 
-      $query .= " ORDER BY `".$this->options['customSort']['field']."` ".$this->options['customSort']['direction'];
+      $query .= " ORDER BY `score` DESC";
+      //$query .= " ORDER BY `".$this->options['customSort']['field']."` ".$this->options['customSort']['direction'];
 
       if ($this->options['limit'] !== false) {
         $l = (int)$this->options['limit'];
