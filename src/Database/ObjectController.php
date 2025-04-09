@@ -179,60 +179,44 @@ class ObjectController extends Database {
     }
   }
 
-  // TODO: this need documenting that the field(s) being searched
-  // need a fulltext index
   public function search($fields, $value): array|null {
 
     $tableName = "obj_".$this->objectName;
     $objects = null;
 
-    //Value to search for must only be Alpha+Underscore
-    if (
-        preg_match($this->regexPattern, $value)
-    ) {
+    $query = "SELECT * FROM `$tableName` WHERE ";
 
-      $fieldsArray = Array();
+    $fieldsSQL = Array();
 
-      foreach ($fields as $field) {
+    foreach ($fields as $field) {
 
-        //Each search field must only be Alpha+Underscore
-        if (preg_match($this->regexPattern, $field)) {
+      //Each search field must only be Alpha+Underscore
+      if (preg_match($this->regexPattern, $field)) {
 
-          $fieldsArray[] = $field;
+        $valueReplaced = str_replace(" ","%",$value);
+        $fieldsSQL[] = "`$field` LIKE '%$valueReplaced%'";
 
-        } else {
-          //TODO: throw new invalid field name exception
-
-        }
       }
-
-      $fieldsSQL = implode(',',$fieldsArray);
-
-      $query = "SELECT *, MATCH($fieldsSQL) AGAINST ('$value') AS Score FROM `$tableName` WHERE MATCH($fieldsSQL) AGAINST ('$value')";
-
-      if (!$this->options['includeUnpublished']) {
-        $query .= " AND `published` = 1";
-      }
-
-      $query .= " ORDER BY `score` DESC";
-      //$query .= " ORDER BY `".$this->options['customSort']['field']."` ".$this->options['customSort']['direction'];
-
-      if ($this->options['limit'] !== false) {
-        $l = (int)$this->options['limit'];
-        $query .= " LIMIT $l;";
-      }
-
-      $obj = $this->dbObject->prepare($query);
-      $obj->execute();
-
-      // TODO: throw exception if class not found, maybe create a new exception,
-      //  or potentially create a new FileNotFoundException for all areas in Conduit?
-      $objects = $obj->fetchAll(PDO::FETCH_CLASS, $this->objectName . 'Object');
-
-    } else {
-      //TODO: throw new invalid value exception
-
     }
+
+    $query .= "(".implode(" OR ", $fieldsSQL).")";
+
+    if (!$this->options['includeUnpublished']) {
+      $query .= " AND `published` = 1";
+    }
+
+    $query .= " ORDER BY `".$this->options['customSort']['field']."` ".$this->options['customSort']['direction'];
+
+    if ($this->options['limit'] !== false) {
+      $l = (int)$this->options['limit'];
+      $query .= " LIMIT $l;";
+    }
+
+
+    $obj = $this->dbObject->prepare($query);
+    $obj->execute();
+
+    $objects = $obj->fetchAll(PDO::FETCH_CLASS, $this->objectName . 'Object');
 
     return $objects;
   }
