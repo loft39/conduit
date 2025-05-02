@@ -228,14 +228,14 @@ class ObjectController extends Database {
 
     $query = "SELECT * FROM `$tableName` WHERE ";
 
-    $columnsSQL = Array();
+    $columnsSQL = [];
 
-    foreach ($fields as $column=>$value) {
+    foreach ($fields as $field) {
 
       //Each search field must only be Alpha+Underscore
-      if (preg_match($this->regexPattern, $column)) {
+      if (preg_match($this->regexPattern, $field[0])) {
 
-        $columnsSQL[] = "`$column` = '$value'";
+        $columnsSQL[] = "`$field[0]` = '$field[1]'";
 
       } else {
         //TODO: throw new invalid field name exception
