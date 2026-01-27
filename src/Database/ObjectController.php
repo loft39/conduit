@@ -19,7 +19,14 @@ class ObjectController extends Database {
   )
   {
     parent::__construct();
-    require_once($_SERVER['DOCUMENT_ROOT'] . "/../app/objects/" . $this->objectName . "Object.php");
+    //
+    // Check if running in CLI ($_SERVER['DOCUMENT_ROOT'] is not set) or web server
+    if ($_SERVER['DOCUMENT_ROOT'] !== '') {
+      require_once($_SERVER['DOCUMENT_ROOT'] . "/../app/objects/" . $this->objectName . "Object.php");
+    } else {
+      // Skip back from "Database" folder in vendor to app root first
+      require_once(__DIR__ . "/../../../../../app/objects/" . $this->objectName . "Object.php");
+    }
 
     // Default options
     $defaults = [
