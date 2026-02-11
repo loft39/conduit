@@ -24,9 +24,14 @@ class PluginManager
       if (is_dir($_SERVER['DOCUMENT_ROOT'] . "/../plugins/$plugin")) {
         require_once($_SERVER['DOCUMENT_ROOT'] . "/../plugins/$plugin/$plugin.php");
         $fullClassName = "\Conduit\Plugins\\".$plugin;
-        $this->mountedPlugins[$plugin] = (new $fullClassName($this->routerPassthrough));
+        $this->mountedPlugins[$plugin] = (new $fullClassName($this));
       }
     }
+  }
+
+  public function routerController(): RouterController
+  {
+    return $this->routerPassthrough;
   }
 
   public function mountedPlugins(): array
